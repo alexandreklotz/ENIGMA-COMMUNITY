@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,14 +36,14 @@ public class UtilisateurController {
     //Get method to get all the users in the database. This method will be restricted to administrators later.
     //It will be used for development purposes until then.
     @JsonView(CustomJsonView.UtilisateurView.class)
-    @GetMapping("/users")
+    @GetMapping("/user/all")
     public ResponseEntity<List<Utilisateur>> getUsersList(){
         return ResponseEntity.ok(utilisateurDao.findAll());
     }
 
     //This method will be used when looking for a specific user with his id. Its use will be decided later.
     @JsonView(CustomJsonView.UtilisateurView.class)
-    @GetMapping("/users/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<Utilisateur> getUser(@PathVariable UUID id){
         Optional<Utilisateur> utilisateurBdd = utilisateurDao.findById(id);
 
@@ -52,41 +54,50 @@ public class UtilisateurController {
         }
     }
 
-    //Post method to create a new user.
 
-    /* TODO : Check this method. Since there are no users in the database yet, it returns null and prevents the rest of the method to work.
-        No users -> if returns 0 but when we send a JSON form with POSTMAN it refuses to create a new user saying that the given id must not be null.
-        But it's the method's job to generate a UUID. It needs to be sorted out. */
-
+    //Post method for user registration.
     @JsonView(CustomJsonView.UtilisateurView.class)
-    @PostMapping("/users/new")
+    @PostMapping("/user/new")
     public void newUtilisateur (@RequestBody Utilisateur utilisateur){
 
+        //We first generate a random UUID
+        UUID userUuid = UUID.randomUUID();
+        //We then assign it to the new user
+        utilisateur.setId(userUuid);
+        //Then, we save his info.
+        utilisateur.setEmailuser(utilisateur.getEmailuser());
+        utilisateur.setUserChatPwd(utilisateur.getUserChatPwd());
+        utilisateur.setUserLogin(utilisateur.getUserLogin());
+        utilisateur.setUserNickname(utilisateur.getUserNickname());
+        utilisateur.setUserPassword(utilisateur.getUserPassword());
+        utilisateur.setUserPublicId(utilisateur.getUserPublicId());
+        //The registration date is saved
+        utilisateur.setUserDateRegistration(Date.from(Instant.now()));
+        //And once everything is saved, we save the user itself.
+        utilisateurDao.saveAndFlush(utilisateur);
+    }
+
+    //This method was originally part of the post method. I split it in two different methods,
+    //one to update existing users and another one to create new users.
+    /* TODO : Check if this method is working, if not make it work.*/
+    @JsonView(CustomJsonView.UtilisateurView.class)
+    @PatchMapping("/user/modify")
+    public void updateUtilisateur (@PathVariable UUID id, @RequestBody Utilisateur utilisateur){
         Optional<Utilisateur> utilisateurBdd = utilisateurDao.findById(utilisateur.getId());
 
-        if (utilisateurBdd.isPresent()){
-            //If the user exists, we retrieve it by using its UUID.
-            utilisateur.setId(utilisateurBdd.get().getId());
+        //We retrieve the user using his ID.
+        utilisateur.setId(utilisateurBdd.get().getId());
 
-            //We then modify its info.
-            utilisateurBdd.get().setEmailuser(utilisateur.getEmailuser());
-            utilisateurBdd.get().setUserChatPwd(utilisateur.getUserChatPwd());
-            utilisateurBdd.get().setUserLogin(utilisateur.getUserLogin());
-            utilisateurBdd.get().setUserNickname(utilisateur.getUserNickname());
-            utilisateurBdd.get().setUserPassword(utilisateur.getUserPassword());
-            utilisateurBdd.get().setUserPublicId(utilisateur.getUserPublicId());
-        } else {
-            //If the user doesn't exist, we create it.
+        //We then modify its info.
+        utilisateurBdd.get().setEmailuser(utilisateur.getEmailuser());
+        utilisateurBdd.get().setUserChatPwd(utilisateur.getUserChatPwd());
+        utilisateurBdd.get().setUserLogin(utilisateur.getUserLogin());
+        utilisateurBdd.get().setUserNickname(utilisateur.getUserNickname());
+        utilisateurBdd.get().setUserPassword(utilisateur.getUserPassword());
+        utilisateurBdd.get().setUserPublicId(utilisateur.getUserPublicId());
+        //We then save the user
+        utilisateurDao.saveAndFlush(utilisateur);
 
-            utilisateur.setId(UUID.randomUUID());
-
-            utilisateur.setEmailuser(utilisateur.getEmailuser());
-            utilisateur.setUserChatPwd(utilisateur.getUserChatPwd());
-            utilisateur.setUserLogin(utilisateur.getUserLogin());
-            utilisateur.setUserNickname(utilisateur.getUserNickname());
-            utilisateur.setUserPassword(utilisateur.getUserPassword());
-            utilisateur.setUserPublicId(utilisateur.getUserPublicId());
-        }
     }
 
 }
