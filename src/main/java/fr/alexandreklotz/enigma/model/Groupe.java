@@ -1,11 +1,13 @@
 package fr.alexandreklotz.enigma.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -31,8 +33,9 @@ public class Groupe {
     private String nameGroupe;
 
     @Column
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss", timezone = "Europe/Paris")
     @JsonView(CustomJsonView.GroupeView.class)
-    private String dateCreationGroupe;
+    private Date dateCreationGroupe;
 
     @Column
     @JsonView(CustomJsonView.GroupeView.class)
@@ -79,11 +82,11 @@ public class Groupe {
         this.nameGroupe = nomGroupe;
     }
 
-    public String getDateCreationGroupe() {
+    public Date getDateCreationGroupe() {
         return dateCreationGroupe;
     }
 
-    public void setDateCreationGroupe(String dateCreationGroupe) {
+    public void setDateCreationGroupe(Date dateCreationGroupe) {
         this.dateCreationGroupe = dateCreationGroupe;
     }
 

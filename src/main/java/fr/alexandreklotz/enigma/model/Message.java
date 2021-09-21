@@ -1,11 +1,13 @@
 package fr.alexandreklotz.enigma.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -35,12 +37,14 @@ public class Message {
     private String msgText;
 
     @Column
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss", timezone = "Europe/Paris")
     @JsonView(CustomJsonView.MessageView.class)
-    private String msgDateSent;
+    private Date msgDateSent;
 
     @Column
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss", timezone = "Europe/Paris")
     @JsonView(CustomJsonView.MessageView.class)
-    private String msgDateRead;
+    private Date msgDateRead;
 
     @Column
     @JsonView(CustomJsonView.MessageView.class)
@@ -96,19 +100,19 @@ public class Message {
         this.msgText = msgText;
     }
 
-    public String getMsgDateSent() {
+    public Date getMsgDateSent() {
         return msgDateSent;
     }
 
-    public void setMsgDateSent(String msgDateEnvoi) {
+    public void setMsgDateSent(Date msgDateEnvoi) {
         this.msgDateSent = msgDateEnvoi;
     }
 
-    public String getMsgDateRead() {
+    public Date getMsgDateRead() {
         return msgDateRead;
     }
 
-    public void setMsgDateRead(String msgDateLu) {
+    public void setMsgDateRead(Date msgDateLu) {
         this.msgDateRead = msgDateLu;
     }
 

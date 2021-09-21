@@ -1,11 +1,13 @@
 package fr.alexandreklotz.enigma.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +25,7 @@ public class Utilisateur {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @JsonView(CustomJsonView.UtilisateurView.class)
+    @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.MessageView.class, CustomJsonView.GroupeView.class})
     private UUID id;
 
     @Column(nullable = false)
@@ -39,8 +41,9 @@ public class Utilisateur {
     private String emailuser;
 
     @Column
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss", timezone = "Europe/Paris")
     @JsonView(CustomJsonView.UtilisateurView.class)
-    private String userDateRegistration;
+    private Date userDateRegistration;
 
     @Column
     @JsonView(CustomJsonView.UtilisateurView.class)
@@ -67,6 +70,7 @@ public class Utilisateur {
     /////////////
 
     //An user can be in multiple groups and also create multiple groups. We therefore need to implement a manytomany relation.
+    @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.GroupeView.class})
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_groupes",
@@ -77,6 +81,7 @@ public class Utilisateur {
 
     //An user can send multiple messages and receive multiple messages aswell. An user can send the same message to multiple users without
     //having to create a group for that.
+    @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.MessageView.class})
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_messages",
@@ -121,11 +126,11 @@ public class Utilisateur {
         this.emailuser = emailuser;
     }
 
-    public String getUserDateRegistration() {
+    public Date getUserDateRegistration() {
         return userDateRegistration;
     }
 
-    public void setUserDateRegistration(String userDateRegistration) {
+    public void setUserDateRegistration(Date userDateRegistration) {
         this.userDateRegistration = userDateRegistration;
     }
 

@@ -1,4 +1,5 @@
-##Nothing to see here yet (more to see later)
+Nothing to see here yet (more to see later)
+---
 Enigma is a personal project which consists of a free messaging application.  
 It will provide **real privacy** unlike other messaging solutions (more info about encryption methods later, keys etc).  
 This file will have more info in it later.  
