@@ -7,10 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -69,24 +66,29 @@ public class Utilisateur {
     //Relations//
     /////////////
 
-    //An user can be in multiple groups and also create multiple groups. We therefore need to implement a manytomany relation.
-    @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.GroupeView.class})
+    //A user can be in multiple groups and also create multiple groups. We therefore need to implement a manytomany relation.
+
+    /*@JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.GroupeView.class})
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_groupes",
-            joinColumns = {@JoinColumn(name = "utilisateur_id")},
-            inverseJoinColumns = {@JoinColumn (name = "groupe_id")}
+            joinColumns = {@JoinColumn(name = "utilisateur_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn (name = "groupe_id", referencedColumnName = "id")}
     )
-    private Set<Groupe> userGroupes = new HashSet<>();
+    private List<Groupe> userGroupes;*/
 
-    //An user can send multiple messages and receive multiple messages aswell. An user can send the same message to multiple users without
+    @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.GroupeView.class})
+    @ManyToMany(mappedBy = "groupesUsers")
+    private Set<Groupe> usersGroupes = new HashSet<>();
+
+    //A user can send multiple messages and receive multiple messages aswell. A user can send the same message to multiple users without
     //having to create a group for that.
     @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.MessageView.class})
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_messages",
-            joinColumns = {@JoinColumn(name = "utilisateur_id")},
-            inverseJoinColumns = {@JoinColumn(name = "message_id")}
+            joinColumns = {@JoinColumn(name = "utilisateur_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "message_id", referencedColumnName = "id")}
     )
     private Set<Message> userMessages = new HashSet<>();
 
@@ -94,6 +96,7 @@ public class Utilisateur {
     /////////////////////
     //Getters & Setters//
     /////////////////////
+
     public UUID getId() {
         return id;
     }
@@ -164,5 +167,21 @@ public class Utilisateur {
 
     public void setUserChatPwd(String userChatPwd) {
         this.userChatPwd = userChatPwd;
+    }
+
+    public Set<Groupe> getUsersGroupes() {
+        return usersGroupes;
+    }
+
+    public void setUsersGroupes(Set<Groupe> usersGroupes) {
+        this.usersGroupes = usersGroupes;
+    }
+
+    public Set<Message> getUserMessages() {
+        return userMessages;
+    }
+
+    public void setUserMessages(Set<Message> userMessages) {
+        this.userMessages = userMessages;
     }
 }

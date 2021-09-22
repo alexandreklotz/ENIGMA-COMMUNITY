@@ -7,10 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -52,7 +49,7 @@ public class Message {
 
     @Column
     @JsonView(CustomJsonView.MessageView.class)
-    private UUID userRecipient;
+    private UUID recipientId;
 
 
     //Constructor
@@ -124,11 +121,27 @@ public class Message {
         this.hasBeenRead = hasBeenRead;
     }
 
-    public UUID getUserRecipient() {
-        return userRecipient;
+    public UUID getRecipientId() {
+        return recipientId;
     }
 
-    public void setUserRecipient(UUID userRecipient) {
-        this.userRecipient = userRecipient;
+    public void setRecipientId(UUID userRecipient) {
+        this.recipientId = userRecipient;
+    }
+
+    public Set<Utilisateur> getMessagesUser() {
+        return messagesUser;
+    }
+
+    public void setMessagesUser(Set<Utilisateur> messagesUser) {
+        this.messagesUser = messagesUser;
+    }
+
+    public Set<Groupe> getMessagesGroup() {
+        return messagesGroup;
+    }
+
+    public void setMessagesGroup(Set<Groupe> messagesGroup) {
+        this.messagesGroup = messagesGroup;
     }
 }

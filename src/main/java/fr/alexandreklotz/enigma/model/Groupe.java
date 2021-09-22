@@ -7,10 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -50,15 +47,24 @@ public class Groupe {
     /////////////
 
     //Relation between users and groups. Groups can have multiple users and users can be in multiple groups.
-    @ManyToMany(mappedBy = "userGroupes")
-    private Set<Utilisateur> groupesUsers;
+    /*@ManyToMany(mappedBy = "userGroupes")
+    private Set<Utilisateur> groupesUsers = new HashSet<>();*/
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "groups_utilisateur",
+            joinColumns = {@JoinColumn(name = "groupe_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "utilisateur_id", referencedColumnName = "id")}
+    )
+    private Set<Utilisateur> groupesUsers = new HashSet<>();
+
 
     //Relation between groups and messages. A message can be sent to multiple groups and a group also has multiple messages.
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "groups_messages",
-            joinColumns = {@JoinColumn(name = "groupe_id")},
-            inverseJoinColumns = {@JoinColumn(name = "message_id")}
+            joinColumns = {@JoinColumn(name = "groupe_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "message_id", referencedColumnName = "id")}
     )
     private Set<Message> groupesMessages = new HashSet<>();
 
@@ -96,5 +102,21 @@ public class Groupe {
 
     public void setGroupeOwner(UUID groupeOwner) {
         this.groupeOwner = groupeOwner;
+    }
+
+    public Set<Utilisateur> getGroupesUsers() {
+        return groupesUsers;
+    }
+
+    public void setGroupesUsers(Set<Utilisateur> groupesUsers) {
+        this.groupesUsers = groupesUsers;
+    }
+
+    public Set<Message> getGroupesMessages() {
+        return groupesMessages;
+    }
+
+    public void setGroupesMessages(Set<Message> groupesMessages) {
+        this.groupesMessages = groupesMessages;
     }
 }

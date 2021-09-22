@@ -2,6 +2,8 @@ package fr.alexandreklotz.enigma.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import fr.alexandreklotz.enigma.dao.GroupeDao;
+import fr.alexandreklotz.enigma.dao.MessageDao;
+import fr.alexandreklotz.enigma.dao.UtilisateurDao;
 import fr.alexandreklotz.enigma.model.Groupe;
 import fr.alexandreklotz.enigma.model.Utilisateur;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,10 +26,14 @@ import java.util.UUID;
 public class GroupeController {
 
     private GroupeDao groupeDao;
+    private UtilisateurDao utilisateurDao;
+    private MessageDao messageDao;
 
     @Autowired
-    GroupeController (GroupeDao groupeDao) {
+    GroupeController (GroupeDao groupeDao, UtilisateurDao utilisateurDao, MessageDao messageDao) {
         this.groupeDao = groupeDao;
+        this.utilisateurDao = utilisateurDao;
+        this.messageDao = messageDao;
     }
 
     //////////////////
@@ -54,7 +62,7 @@ public class GroupeController {
     }
 
     //Post method for group creation
-    /* TODO : This method needs to be tested. I think it wont retrieve the user's uuid. */
+    /* TODO : Method OK, but the group doesn't appear in the owner's userGroupes list. Find a way to save it in the user_groupes table */
     @PostMapping("/groupe/new")
     @JsonView(CustomJsonView.GroupeView.class)
     public void newGroupe (@RequestBody Groupe groupe){
@@ -68,8 +76,11 @@ public class GroupeController {
         //We then proceed to save its info, in this case we'll only save its name since it's the only variable that can be set by the user
         groupe.setNameGroupe(groupe.getNameGroupe());
         //We then set the owner of the group
-        groupe.setGroupeOwner(utilisateur.getId());
-
+        groupe.setGroupeOwner(groupe.getGroupeOwner());
+        //We save the creation date
+        groupe.setDateCreationGroupe(Date.from(Instant.now()));
+        //Users which are members of the group
+        groupe.setGroupesUsers(groupe.getGroupesUsers());
         //We then save the group
         groupeDao.saveAndFlush(groupe);
     }

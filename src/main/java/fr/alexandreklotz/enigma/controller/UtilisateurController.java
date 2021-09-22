@@ -1,7 +1,10 @@
 package fr.alexandreklotz.enigma.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import fr.alexandreklotz.enigma.dao.GroupeDao;
+import fr.alexandreklotz.enigma.dao.MessageDao;
 import fr.alexandreklotz.enigma.dao.UtilisateurDao;
+import fr.alexandreklotz.enigma.model.Groupe;
 import fr.alexandreklotz.enigma.model.Utilisateur;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +26,14 @@ import java.util.UUID;
 public class UtilisateurController {
 
     private UtilisateurDao utilisateurDao;
+    private MessageDao messageDao;
+    private GroupeDao groupeDao;
 
     @Autowired
-    UtilisateurController (UtilisateurDao utilisateurDao) {
+    UtilisateurController (UtilisateurDao utilisateurDao, MessageDao messageDao, GroupeDao groupeDao) {
         this.utilisateurDao = utilisateurDao;
+        this.messageDao = messageDao;
+        this.groupeDao = groupeDao;
     }
 
     ////////////////
@@ -85,19 +92,22 @@ public class UtilisateurController {
     public void updateUtilisateur (@PathVariable UUID id, @RequestBody Utilisateur utilisateur){
         Optional<Utilisateur> utilisateurBdd = utilisateurDao.findById(utilisateur.getId());
 
-        //We retrieve the user using his ID.
-        utilisateur.setId(utilisateurBdd.get().getId());
+        if (utilisateurBdd.isPresent()) {
+            //We retrieve the user using his ID.
+            utilisateur.setId(utilisateurBdd.get().getId());
 
-        //We then modify its info.
-        utilisateurBdd.get().setEmailuser(utilisateur.getEmailuser());
-        utilisateurBdd.get().setUserChatPwd(utilisateur.getUserChatPwd());
-        utilisateurBdd.get().setUserLogin(utilisateur.getUserLogin());
-        utilisateurBdd.get().setUserNickname(utilisateur.getUserNickname());
-        utilisateurBdd.get().setUserPassword(utilisateur.getUserPassword());
-        utilisateurBdd.get().setUserPublicId(utilisateur.getUserPublicId());
-        //We then save the user
-        utilisateurDao.saveAndFlush(utilisateur);
+            //We then modify its info.
+            utilisateurBdd.get().setEmailuser(utilisateur.getEmailuser());
+            utilisateurBdd.get().setUserChatPwd(utilisateur.getUserChatPwd());
+            utilisateurBdd.get().setUserLogin(utilisateur.getUserLogin());
+            utilisateurBdd.get().setUserNickname(utilisateur.getUserNickname());
+            utilisateurBdd.get().setUserPassword(utilisateur.getUserPassword());
+            utilisateurBdd.get().setUserPublicId(utilisateur.getUserPublicId());
+            //We then save the user
+            utilisateurDao.saveAndFlush(utilisateur);
+        } else {
 
+        }
     }
 
 }

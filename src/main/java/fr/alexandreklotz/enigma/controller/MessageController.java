@@ -1,15 +1,18 @@
 package fr.alexandreklotz.enigma.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import fr.alexandreklotz.enigma.dao.GroupeDao;
 import fr.alexandreklotz.enigma.dao.MessageDao;
+import fr.alexandreklotz.enigma.dao.UtilisateurDao;
 import fr.alexandreklotz.enigma.model.Message;
 import fr.alexandreklotz.enigma.model.Utilisateur;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,10 +24,14 @@ import java.util.UUID;
 public class MessageController {
 
     private MessageDao messageDao;
+    private UtilisateurDao utilisateurDao;
+    private GroupeDao groupeDao;
 
     @Autowired
-    MessageController (MessageDao messageDao){
+    MessageController (MessageDao messageDao, UtilisateurDao utilisateurDao, GroupeDao groupeDao){
         this.messageDao = messageDao;
+        this.utilisateurDao = utilisateurDao;
+        this.groupeDao = groupeDao;
     }
 
     //////////////////
@@ -53,7 +60,7 @@ public class MessageController {
     }
 
     //Post method to create a new message.
-    /* TODO : This method needs to be tested. It might not retrieve the sender's ID properly or not at all. It may not work for the recipient neither */
+    /* TODO : Get the "userMessages" list to work. */
     @JsonView(CustomJsonView.MessageView.class)
     @PostMapping("/message/new")
     public void newMessage (@RequestBody Message message){
@@ -62,17 +69,28 @@ public class MessageController {
         UUID messageUuid = UUID.randomUUID();
         message.setId(messageUuid);
 
-        //We then create a user object
-        Utilisateur utilisateur = new Utilisateur();
-        //We then retrieve its ID to assign it to the senderId variable
-        message.setSenderId(utilisateur.getId());
-        //We set the other message's variables
-        message.setMsgText(message.getMsgText()); //Message encryption will be done later
-        message.setUserRecipient(message.getUserRecipient());
-        //The "hasBeenRead" parameter will be implemented later.
+        //We then create a user object linked to the interface's findById method
+        Optional<Utilisateur> utilisateurSender = utilisateurDao.findById(message.getSenderId());
+        Optional<Utilisateur> utilisateurReceiver = utilisateurDao.findById(message.getRecipientId());
 
-        //We then save the message.
-        messageDao.saveAndFlush(message);
+        if (utilisateurSender.isPresent() && utilisateurReceiver.isPresent()) {
+            //We then retrieve its ID to assign it to the senderId variable
+            message.setSenderId(message.getSenderId());
+            //We set the other message's variables
+            message.setMsgText(message.getMsgText()); //Message encryption will be done later
+            message.setRecipientId(message.getRecipientId());
+            //Date at which the message has been sent
+            message.setMsgDateSent(Date.from(Instant.now()));
+
+            //Add the message to the userMessages list for both the receiver and sender
+
+            //We then save the message.
+            messageDao.saveAndFlush(message);
+        } else {
+            //What could it possibly return ?
+            //else if if the sender doesn't exist and if the recipient exist / etc ? Would be preferrable to send an error if one of the conditions is false
+            //to not give anything away just in case.
+        }
     }
 
 }

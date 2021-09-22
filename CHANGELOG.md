@@ -15,10 +15,6 @@ Done this day :
 Other notes :
 - The database is successfully created when the code is compiled.
 
-TO DO :
-- Set isVisible and other user's properties to nullable = false once testing is finished.
-- When creating an user through the post method, an error is returned : java.lang.IllegalArgumentException: The given id must not be null !
-
 The error with the ID is linked to the POST method in the controller. Since the new user doesn't have an ID yet, it returns an error saying that it doesn't exist.  
 It should attribute a UUID to the user when its created => utilisateur.setId(UUID.randomUUID()); but it doesn't seem to work or is bypassed.
 
@@ -38,11 +34,16 @@ Done this day :
 - GroupeController creation -> Creation of two get methods and of a post method.
 - MessageController creation -> Creation of two get methods and of a post method.
 
-TO DO :
-- Setup of the "isVisible" option, is "1" by default but if the user has a chatPwd and a publicId he will then be able to turn it off to be invisible and to only
-be found with his publicId
-- userChatPwd -> encryption required to make it fully private
-- userPassword -> encryption required to make it fully private
-- Once all the get/post methods are working, security will be implemented.
-- Function to add files to messages
-- Fix the issue with the timezone. Time in dates are two hours behind the current real time.
+
+---
+###22/09/2021
+
+Done today :
+- Post method for groups and messagescreation is working. Same issue with the timezone as in utilisateurs.
+- Refactor of "userRecipient" to "recipientId" -> This variable refers to both groups and user therefore it wasn't making any sense to keep this name
+- Getters and setters were missing for the HashSets used in the relations.
+
+A lot of troubleshooting and research has been done today. There's currently an issue with the relations ; when a group is created,
+its id and the id of each member of a group should be in the "user_groupes" table but it's not the case.  
+recipientId also needs to be clarified and reviewed (message entity) ; we have a list of recipients (userMessages) which will contain the users that will
+receive this message. I need to clarify the conception and a few variables.
