@@ -93,4 +93,16 @@ public class MessageController {
         }
     }
 
+    @DeleteMapping("/message/delete/{id}")
+    public String deleteMessage (@PathVariable UUID id){
+        Message message = new Message();
+
+        if(messageDao.findById(message.getId()).isPresent()){
+            messageDao.deleteById(id);
+            return "The message has been deleted.";
+        } else {
+            return "This message doesn't exist.";
+        }
+    }
+
 }

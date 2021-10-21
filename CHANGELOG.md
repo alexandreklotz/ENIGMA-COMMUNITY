@@ -47,3 +47,22 @@ A lot of troubleshooting and research has been done today. There's currently an 
 its id and the id of each member of a group should be in the "user_groupes" table but it's not the case.  
 recipientId also needs to be clarified and reviewed (message entity) ; we have a list of recipients (userMessages) which will contain the users that will
 receive this message. I need to clarify the conception and a few variables.
+
+---
+###21/10/2021
+
+Long inactivity period due to multiple reasons.
+Project hasn't been updated in a while because of technology watch and research about messaging solutions developed on spring.
+Creation of a new package : config. This package will contain the websocket configuration once it will be implemented.
+config once it will be implemented.
+
+**IMPORTANT NOTE** : Since this has been developed without websocket in mind (hadn't heard of it back then), i may recreate the whole project and abandon this code.
+
+Currently in progress :
+- @DeleteMapping mappings on each controller -> currently having issues with this, it refuses to
+process the deletion saying that no entity exists with the specified if even though it exists. Same with other controllers and entities.
+- Troubleshooting of the lists linked to each entity such as "groupesUsers", etc (lists to manage relations between entities). 
+The relations may need to be deleted and recreated.
+
+Planned next :
+- Password encryption with BCrypt.

@@ -86,7 +86,7 @@ public class UtilisateurController {
 
     //This method was originally part of the post method. I split it in two different methods,
     //one to update existing users and another one to create new users.
-    /* TODO : Check if this method is working, if not make it work.*/
+    /* TODO : Check if this method is working, if not make it work. Change the Patch to Put*/
     @JsonView(CustomJsonView.UtilisateurView.class)
     @PatchMapping("/user/modify")
     public void updateUtilisateur (@PathVariable UUID id, @RequestBody Utilisateur utilisateur){
@@ -107,6 +107,20 @@ public class UtilisateurController {
             utilisateurDao.saveAndFlush(utilisateur);
         } else {
 
+        }
+    }
+
+    // TODO : When trying to delete a user, it returns an error
+    @DeleteMapping("/user/delete/{id}")
+    public String deleteUser (@PathVariable UUID id){
+
+        Utilisateur utilisateur = new Utilisateur();
+
+        if (utilisateurDao.findById(utilisateur.getId()).isPresent()){
+            utilisateurDao.deleteById(id);
+            return "The user with the id '" + id + "' has been deleted.";
+        } else {
+            return "This user doesn't exist. Impossible to complete deletion.";
         }
     }
 

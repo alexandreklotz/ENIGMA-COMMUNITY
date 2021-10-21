@@ -76,12 +76,20 @@ public class GroupeController {
         //We then proceed to save its info, in this case we'll only save its name since it's the only variable that can be set by the user
         groupe.setNameGroupe(groupe.getNameGroupe());
         //We then set the owner of the group
-        groupe.setGroupeOwner(groupe.getGroupeOwner());
+        //groupe.setGroupeOwner(groupe.getGroupeOwner());
+        groupe.setGroupeOwner(utilisateur.getId());
         //We save the creation date
         groupe.setDateCreationGroupe(Date.from(Instant.now()));
         //Users which are members of the group
         groupe.setGroupesUsers(groupe.getGroupesUsers());
         //We then save the group
         groupeDao.saveAndFlush(groupe);
+    }
+
+    // TODO : When trying to delete a group, it returns an error
+    @DeleteMapping("/groupe/delete/{id}")
+    public ResponseEntity<String> deleteGroupe (@PathVariable UUID id){
+        groupeDao.deleteById(id);
+        return ResponseEntity.ok("The group with the id : " + id + " has been deleted.");
     }
 }
