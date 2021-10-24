@@ -54,15 +54,33 @@ receive this message. I need to clarify the conception and a few variables.
 Long inactivity period due to multiple reasons.
 Project hasn't been updated in a while because of technology watch and research about messaging solutions developed on spring.
 Creation of a new package : config. This package will contain the websocket configuration once it will be implemented.
-config once it will be implemented.
 
 **IMPORTANT NOTE** : Since this has been developed without websocket in mind (hadn't heard of it back then), i may recreate the whole project and abandon this code.
 
 Currently in progress :
 - @DeleteMapping mappings on each controller -> currently having issues with this, it refuses to
-process the deletion saying that no entity exists with the specified if even though it exists. Same with other controllers and entities.
+process the deletion saying that no entity exists with the specified id even though it exists. Same with other controllers and entities.
 - Troubleshooting of the lists linked to each entity such as "groupesUsers", etc (lists to manage relations between entities). 
 The relations may need to be deleted and recreated.
 
 Planned next :
 - Password encryption with BCrypt.
+
+---
+###24/10/2021
+
+A few modifications have been made to the project today. A SecurityConfig file has been created to configure the web
+authentication and the users' password encryption with BCrypt. The password still needs to be encrypted and a salt
+has to be implemented aswell. The SecurityConfig is far from finished, it needs reviewing and modifications.
+
+Done today :
+- Creation of RegisterController which will be dedicated to the user registration.
+- Creation of SecurityConfig to manage the accesses accordingly to the role of the user (ADMIN, USER for example)
+- Removal of the registration method in UtilisateurController
+- Spring Security dependency has been added in pom.xml
+
+Still in progress :
+- BCrypt -> Bean and BCrypt have been created in SecurityConfig but passwords still aren't encrypted. Still needs to be implemented
+- Relations between entities (ManyToOne, ...) still need to be troubleshooted
+- SecurityConfig has to be finalized (web login with a browser, use of the users in the database with the admin role for login)
+- @DeleteMapping -> Need to find why UUIDs are preventing this method to work.

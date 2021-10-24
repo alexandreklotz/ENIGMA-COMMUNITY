@@ -62,33 +62,11 @@ public class UtilisateurController {
     }
 
 
-    //Post method for user registration.
-    @JsonView(CustomJsonView.UtilisateurView.class)
-    @PostMapping("/user/new")
-    public void newUtilisateur (@RequestBody Utilisateur utilisateur){
-
-        //We first generate a random UUID
-        UUID userUuid = UUID.randomUUID();
-        //We then assign it to the new user
-        utilisateur.setId(userUuid);
-        //Then, we save his info.
-        utilisateur.setEmailuser(utilisateur.getEmailuser());
-        utilisateur.setUserChatPwd(utilisateur.getUserChatPwd());
-        utilisateur.setUserLogin(utilisateur.getUserLogin());
-        utilisateur.setUserNickname(utilisateur.getUserNickname());
-        utilisateur.setUserPassword(utilisateur.getUserPassword());
-        utilisateur.setUserPublicId(utilisateur.getUserPublicId());
-        //The registration date is saved
-        utilisateur.setUserDateRegistration(Date.from(Instant.now()));
-        //And once everything is saved, we save the user itself.
-        utilisateurDao.saveAndFlush(utilisateur);
-    }
-
     //This method was originally part of the post method. I split it in two different methods,
     //one to update existing users and another one to create new users.
-    /* TODO : Check if this method is working, if not make it work. Change the Patch to Put*/
+    /* TODO : Check if this method is working, if not make it work */
     @JsonView(CustomJsonView.UtilisateurView.class)
-    @PatchMapping("/user/modify")
+    @PutMapping("/user/modify/{id}")
     public void updateUtilisateur (@PathVariable UUID id, @RequestBody Utilisateur utilisateur){
         Optional<Utilisateur> utilisateurBdd = utilisateurDao.findById(utilisateur.getId());
 
@@ -110,7 +88,7 @@ public class UtilisateurController {
         }
     }
 
-    // TODO : When trying to delete a user, it returns an error
+    // TODO : When trying to delete a user, it returns an error. Error caused by the use of UUIDs.
     @DeleteMapping("/user/delete/{id}")
     public String deleteUser (@PathVariable UUID id){
 
