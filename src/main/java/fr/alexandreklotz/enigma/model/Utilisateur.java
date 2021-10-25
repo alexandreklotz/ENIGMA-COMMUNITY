@@ -22,6 +22,7 @@ public class Utilisateur {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
+    @Column(columnDefinition = "BINARY(16)")
     @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.MessageView.class, CustomJsonView.GroupeView.class})
     private UUID id;
 
@@ -66,6 +67,8 @@ public class Utilisateur {
     //Relations//
     /////////////
 
+    //Relations have been disabled for the time being. The app needs to be restructured.
+
     //A user can be in multiple groups and also create multiple groups. We therefore need to implement a manytomany relation.
 
     /*@JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.GroupeView.class})
@@ -75,7 +78,7 @@ public class Utilisateur {
             joinColumns = {@JoinColumn(name = "utilisateur_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn (name = "groupe_id", referencedColumnName = "id")}
     )
-    private List<Groupe> userGroupes;*/
+    private List<Groupe> userGroupes;
 
     @JsonView({CustomJsonView.UtilisateurView.class, CustomJsonView.GroupeView.class})
     @ManyToMany(mappedBy = "groupesUsers")
@@ -90,7 +93,7 @@ public class Utilisateur {
             joinColumns = {@JoinColumn(name = "utilisateur_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "message_id", referencedColumnName = "id")}
     )
-    private Set<Message> userMessages = new HashSet<>();
+    private Set<Message> userMessages = new HashSet<>(); */
 
 
     /////////////////////
@@ -169,7 +172,7 @@ public class Utilisateur {
         this.userChatPwd = userChatPwd;
     }
 
-    public Set<Groupe> getUsersGroupes() {
+    /*public Set<Groupe> getUsersGroupes() {
         return usersGroupes;
     }
 
@@ -183,5 +186,5 @@ public class Utilisateur {
 
     public void setUserMessages(Set<Message> userMessages) {
         this.userMessages = userMessages;
-    }
+    }*/
 }

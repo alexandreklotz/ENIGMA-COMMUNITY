@@ -22,6 +22,7 @@ public class Groupe {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
+    @Column(columnDefinition = "BINARY(16)")
     @JsonView(CustomJsonView.GroupeView.class)
     private UUID id;
 
@@ -46,9 +47,11 @@ public class Groupe {
     //Relations//
     /////////////
 
+    //Relations have been disabled for the time being. The app needs to be restructured.
+
     //Relation between users and groups. Groups can have multiple users and users can be in multiple groups.
     /*@ManyToMany(mappedBy = "userGroupes")
-    private Set<Utilisateur> groupesUsers = new HashSet<>();*/
+    private Set<Utilisateur> groupesUsers = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -66,7 +69,7 @@ public class Groupe {
             joinColumns = {@JoinColumn(name = "groupe_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "message_id", referencedColumnName = "id")}
     )
-    private Set<Message> groupesMessages = new HashSet<>();
+    private Set<Message> groupesMessages = new HashSet<>(); */
 
     /////////////////////
     //Setters & Getters//
@@ -104,7 +107,7 @@ public class Groupe {
         this.groupeOwner = groupeOwner;
     }
 
-    public Set<Utilisateur> getGroupesUsers() {
+    /*public Set<Utilisateur> getGroupesUsers() {
         return groupesUsers;
     }
 
@@ -118,5 +121,5 @@ public class Groupe {
 
     public void setGroupesMessages(Set<Message> groupesMessages) {
         this.groupesMessages = groupesMessages;
-    }
+    }*/
 }

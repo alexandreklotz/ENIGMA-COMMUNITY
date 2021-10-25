@@ -2,15 +2,12 @@ package fr.alexandreklotz.enigma.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import fr.alexandreklotz.enigma.dao.GroupeDao;
-import fr.alexandreklotz.enigma.dao.MessageDao;
 import fr.alexandreklotz.enigma.dao.UtilisateurDao;
 import fr.alexandreklotz.enigma.model.Groupe;
 import fr.alexandreklotz.enigma.model.Utilisateur;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
-import org.hibernate.type.UUIDCharType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -27,13 +24,11 @@ public class GroupeController {
 
     private GroupeDao groupeDao;
     private UtilisateurDao utilisateurDao;
-    private MessageDao messageDao;
 
     @Autowired
-    GroupeController (GroupeDao groupeDao, UtilisateurDao utilisateurDao, MessageDao messageDao) {
+    GroupeController (GroupeDao groupeDao, UtilisateurDao utilisateurDao) {
         this.groupeDao = groupeDao;
         this.utilisateurDao = utilisateurDao;
-        this.messageDao = messageDao;
     }
 
     //////////////////
@@ -81,15 +76,21 @@ public class GroupeController {
         //We save the creation date
         groupe.setDateCreationGroupe(Date.from(Instant.now()));
         //Users which are members of the group
-        groupe.setGroupesUsers(groupe.getGroupesUsers());
+        //groupe.setGroupesUsers(groupe.getGroupesUsers());
         //We then save the group
         groupeDao.saveAndFlush(groupe);
     }
 
-    // TODO : When trying to delete a group, it returns an error
+
     @DeleteMapping("/groupe/delete/{id}")
-    public ResponseEntity<String> deleteGroupe (@PathVariable UUID id){
-        groupeDao.deleteById(id);
-        return ResponseEntity.ok("The group with the id : " + id + " has been deleted.");
+    public String deleteGroupe (@PathVariable UUID id){
+
+        if(groupeDao.findById(id).isPresent()){
+            groupeDao.deleteById(id);
+            return "The group with the id '" + id + "' has been deleted.";
+        } else {
+            return "The group with the specified id doesn't exist in the database.";
+        }
+
     }
 }

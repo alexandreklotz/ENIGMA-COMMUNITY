@@ -2,18 +2,13 @@ package fr.alexandreklotz.enigma.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import fr.alexandreklotz.enigma.dao.GroupeDao;
-import fr.alexandreklotz.enigma.dao.MessageDao;
 import fr.alexandreklotz.enigma.dao.UtilisateurDao;
-import fr.alexandreklotz.enigma.model.Groupe;
 import fr.alexandreklotz.enigma.model.Utilisateur;
 import fr.alexandreklotz.enigma.view.CustomJsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,13 +21,11 @@ import java.util.UUID;
 public class UtilisateurController {
 
     private UtilisateurDao utilisateurDao;
-    private MessageDao messageDao;
     private GroupeDao groupeDao;
 
     @Autowired
-    UtilisateurController (UtilisateurDao utilisateurDao, MessageDao messageDao, GroupeDao groupeDao) {
+    UtilisateurController (UtilisateurDao utilisateurDao, GroupeDao groupeDao) {
         this.utilisateurDao = utilisateurDao;
-        this.messageDao = messageDao;
         this.groupeDao = groupeDao;
     }
 
@@ -88,13 +81,10 @@ public class UtilisateurController {
         }
     }
 
-    // TODO : When trying to delete a user, it returns an error. Error caused by the use of UUIDs.
     @DeleteMapping("/user/delete/{id}")
     public String deleteUser (@PathVariable UUID id){
 
-        Utilisateur utilisateur = new Utilisateur();
-
-        if (utilisateurDao.findById(utilisateur.getId()).isPresent()){
+        if (utilisateurDao.findById(id).isPresent()){
             utilisateurDao.deleteById(id);
             return "The user with the id '" + id + "' has been deleted.";
         } else {

@@ -84,3 +84,20 @@ Still in progress :
 - Relations between entities (ManyToOne, ...) still need to be troubleshooted
 - SecurityConfig has to be finalized (web login with a browser, use of the users in the database with the admin role for login)
 - @DeleteMapping -> Need to find why UUIDs are preventing this method to work.
+
+---
+###25/10/2021
+
+I haven't made many changes to the project today considering that it will need to be restructured.
+
+Done today :
+- Deletion of "SecurityConfig" and Spring Security has been disabled in pom.xml -> BCrypt passwords will come later (i need to focus on more basic things first)
+- @DeleteMappings now work ! I needed to add the column definition after the @column annotation above the ID in the class which is BINARY(16).
+- Relations between entities have been disabled. I will restructure the code and adapt it to websocket.
+- Message class and anything linked to it has been deleted. It will also be re-developed once i will know more about websocket
+
+Still in progress :
+- Technology watch about websocket and how instant messaging apps work
+
+Once the basic functions will work such as individual messaging and group messaging, and once everything will be done correctly then i will implement spring security
+and start to develop a login function to the web interface of the application (for messaging only).
